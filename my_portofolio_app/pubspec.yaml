@@ -60,6 +60,9 @@ flutter:
 
   assets:
     - assets/images/lutfi.jpeg
+    - assets/images/erp.png
+    - assets/images/inventory.png
+    - assets/images/companyprofile.jpeg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
