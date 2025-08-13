@@ -1,28 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_portofolio_app/components/footer.dart';
+import 'package:provider/provider.dart';
+import 'package:my_portofolio_app/widgets/footer.dart';
 
-class ProfileScreen extends StatelessWidget {
-  // Dummy data, bisa diganti pakai model/data asli
-  final String name = "Lutfi Cahya Nugraha";
-  final String position = "Junior Software Engineer";
-  final String email = "lutfi.cahya@solecode.id";
-  final String phone = "+62 821-1083-3753";
-  final String location = "Tangerang Selatan, Indonesia";
-  
+import '../models/profile.dart';
+import './editprofilescreen.dart';
+import '../providers/profile_providers.dart';
+import '../widgets/footer.dart';
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String email = "lutfi.cahya@solecode.id";
+  String phone = "+62 821-1083-3753";
+
+  @override
   Widget build(BuildContext context) {
+    final profileData = context.watch<ProfileProvider>().profile;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 20),
-            buildProfileHeader(),
+            buildProfileHeader(context, profileData),
             const SizedBox(height: 20),
-            buildContactInfo(),
+            buildContactInfo(profileData), 
             const SizedBox(height: 20),
             buildShortBioInfo(),
             const SizedBox(height: 30),
@@ -33,11 +42,10 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // 👇 Ditaruh dalam class ProfileScreen
-  Widget buildProfileHeader() {
+  Widget buildProfileHeader(BuildContext context, Profile profile) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(20),
+      width: 370, 
+      padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -50,39 +58,51 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, 
         children: [
-          Center(
-            child: Column(
-              children: [
-                const CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage('assets/images/lutfi.jpeg'),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  name,
-                  style: GoogleFonts.poppins(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  position,
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
+          const CircleAvatar(
+            radius: 45, 
+            backgroundImage: AssetImage('assets/images/lutfi.jpeg'),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            profile.name,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          Text(
+            profile.position,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2E3A59),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              textStyle: const TextStyle(fontSize: 14),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const EditProfileScreen(),
+                ),
+              );
+            },
+            child: const Text("Edit Profile"),
+          )
         ],
       ),
     );
   }
 
-  Widget buildContactInfo() {
+  Widget buildContactInfo(Profile profile) { // <-- pakai profile dari provider
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
@@ -124,7 +144,7 @@ class ProfileScreen extends StatelessWidget {
           _buildInfoRow(
             icon: Icons.location_on_outlined,
             label: 'Office Location',
-            value: location,
+            value: profile.location, // <-- sekarang pakai provider
           ),
         ],
       ),
@@ -146,10 +166,10 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Bio',
             style: TextStyle(
               fontSize: 18,
@@ -157,8 +177,8 @@ class ProfileScreen extends StatelessWidget {
               color: Color(0xFF2E3A59),
             ),
           ),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: 16),
+          Text(
             'I’m a certified fullstack web developer with over 1 years of experience as an HRIS Technical Support (Programmer). I work on developing individual features in internal HCM systems end-to-end from requirement analysis and development to implementation. My skill set includes Laravel, SQL Server, PostgreSQL, and other modern web technologies.',
             style: TextStyle(
               fontSize: 14,

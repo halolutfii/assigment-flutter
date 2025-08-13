@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_portofolio_app/components/footer.dart';
+import 'package:my_portofolio_app/widgets/footer.dart';
 
 class PortofolioScreen extends StatelessWidget {
   final List<Map<String, dynamic>> projects = [

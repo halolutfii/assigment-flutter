@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'components/appbar.dart';
-import 'components/drawer.dart';
-import 'components/header.dart';
-import 'screen/homescreen.dart';
-import 'screen/profilescreen.dart';
-import 'screen/portofolioscreen.dart';
+import 'package:provider/provider.dart';
+import 'widgets/appbar.dart';
+import 'widgets/drawer.dart';
+import 'widgets/header.dart';
+import 'screens/homescreen.dart';
+import 'screens/profilescreen.dart';
+import 'screens/portofolioscreen.dart';
+import 'providers/profile_providers.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ProfileProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
