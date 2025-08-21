@@ -1,45 +1,48 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:my_portofolio_app/widgets/footer.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/portofolio_providers.dart';
+
+import 'addpotofolioscreen.dart';
 
 class PortofolioScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> projects = [
-    {
-      'title': 'HRIS Dashboard',
-      'description': 'An internal tool for managing employee data.',
-      'technologies': ['Laravel', 'PostgreSQL', 'Bootstrap'],
-      'image': 'assets/images/erp.png',
-    },
-    {
-      'title': 'ERP Inventory App',
-      'description': 'Helps manage warehouse stock and flow.',
-      'technologies': ['Flutter', 'Firebase', 'Node.js'],
-      'image': 'assets/images/inventory.png',
-    },
-    {
-      'title': 'Company Profile Website',
-      'description': 'A responsive web for company branding.',
-      'technologies': ['HTML', 'CSS', 'JavaScript'],
-      'image': 'assets/images/companyprofile.jpeg',
-    },
-  ];
+  const PortofolioScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final portfolioProvider = Provider.of<PortofolioProvider>(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        ...projects.map((project) => buildProjectCard(
-              title: project['title'],
-              description: project['description'],
-              tech: List<String>.from(project['technologies']),
-              imagePath: project['image'],
-            )),
-        const SizedBox(height: 30),
-        Footer(),
-      ],
-    ),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      body: portfolioProvider.items.isEmpty
+          ? const Center(child: Text("No portfolio yet"))
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: portfolioProvider.items.length,
+              itemBuilder: (ctx, i) {
+                final item = portfolioProvider.items[i];
+                return buildProjectCard(
+                  title: item.title,
+                  description: item.description,
+                  tech: item.category.isNotEmpty
+                      ? [item.category]
+                      : [], // bisa juga List<String>
+                  imagePath: item.image,
+                );
+              },
+            ),
+
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: const Color(0xFF2E3A59),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AddPortfolioScreen()),
+                );
+              },
+              child: const Icon(Icons.add, color: Colors.white), 
+            ),
     );
   }
 
@@ -68,26 +71,38 @@ class PortofolioScreen extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              imagePath,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-            ),
+            child: imagePath.isNotEmpty
+                ? Image.file(
+                    File(imagePath),
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.work, size: 40),
+                  ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    )),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                Text(description,
-                    maxLines: 2, overflow: TextOverflow.ellipsis),
+                Text(
+                  description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
@@ -95,7 +110,8 @@ class PortofolioScreen extends StatelessWidget {
                   children: tech
                       .map((t) => Chip(
                             label: Text(t),
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8),
                           ))
                       .toList(),
                 ),

@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
 import 'widgets/appbar.dart';
 import 'widgets/drawer.dart';
 import 'widgets/header.dart';
+
 import 'screens/homescreen.dart';
 import 'screens/profilescreen.dart';
 import 'screens/portofolioscreen.dart';
+
 import 'providers/profile_providers.dart';
+import 'providers/portofolio_providers.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ProfileProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => PortofolioProvider()), 
+      ],
       child: const MyApp(),
     ),
   );
@@ -50,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
     ProfileScreen(),
     PortofolioScreen(),
   ];
-  final List<String> _titles = ['ESS Solecode', 'Profile Employee', 'Portofolio Employee'];
+  final List<String> _titles = ['Home Portofolio', 'Profile', 'My Portofolio'];
 
   @override
   Widget build(BuildContext context) {

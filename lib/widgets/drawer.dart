@@ -23,7 +23,7 @@ class AppDrawer extends StatelessWidget {
                 const Icon(Icons.verified_user, color: Colors.white, size: 48),
                 const SizedBox(height: 8),
                 Text(
-                  'ESS Solecode',
+                  'My Portofolio App',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: 18,
@@ -31,7 +31,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Employee App',
+                  'My Portofolio',
                   style: GoogleFonts.poppins(
                     color: Colors.white70,
                     fontSize: 14,

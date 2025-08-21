@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
             const Icon(Icons.verified_user, size: 40, color: Colors.white),
             const SizedBox(height: 20),
             Text(
-              'Welcome to ESS Solecode',
+              'Welcome to Portofolio App',
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Employee Self Service App',
+              'Portofolio App',
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 color: Colors.white70,
