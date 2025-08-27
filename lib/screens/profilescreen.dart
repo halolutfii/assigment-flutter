@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_portofolio_app/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:my_portofolio_app/widgets/footer.dart';
 
@@ -88,12 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               textStyle: const TextStyle(fontSize: 14),
             ),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const EditProfileScreen(),
-                ),
-              );
+              Navigator.pushNamed(context, AppRoutes.editProfile);
             },
             child: const Text("Edit Profile"),
           )

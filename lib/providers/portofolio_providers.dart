@@ -85,7 +85,21 @@ class PortofolioProvider with ChangeNotifier {
       clearForm();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Portfolio saved successfully")),
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text("Portfolio saved successfully!"),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
       );
 
       Navigator.pop(context);
