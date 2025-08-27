@@ -13,6 +13,8 @@ import 'screens/portofolioscreen.dart';
 import 'providers/profile_providers.dart';
 import 'providers/portofolio_providers.dart';
 
+import 'routes.dart';
+
 void main() {
   runApp(
     MultiProvider(
@@ -37,6 +39,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
       home: MainScreen(),
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }
@@ -57,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
     ProfileScreen(),
     PortofolioScreen(),
   ];
-  final List<String> _titles = ['Home Portofolio', 'Profile', 'My Portofolio'];
+  final List<String> _titles = ['Home', 'Profile', 'Portofolio'];
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +68,24 @@ class _MainScreenState extends State<MainScreen> {
       appBar: CustomAppBar(
         title: _titles[_currentIndex],
         showDrawer: true, 
-        onSettings: () {
-            // aksi saat icon settings diklik
-            print('Settings clicked');
+        onSettings: () {   
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: const [
+                  Icon(Icons.check_circle, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text("Settings Clicked!"),
+                ],
+              ),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              duration: const Duration(seconds: 2),
+            ),
+          );
         },
       ),
       drawer: AppDrawer(
