@@ -18,10 +18,8 @@ class PortofolioProvider extends ChangeNotifier {
   File? selectedImage;
 
   List<Portofolio> portofolios = [];
+  bool isLoading = false; 
 
-  // -------------------------------
-  // Setters
-  // -------------------------------
   void setCategory(String category) {
     selectedCategory = category;
     notifyListeners();
@@ -53,9 +51,7 @@ class PortofolioProvider extends ChangeNotifier {
     }
   }
 
-  // -------------------------------
-  // CRUD Operations
-  // -------------------------------
+  // Create
   Future<void> fetchPortofolios() async {
     portofolios = await _service.fetchPortofolios();
     notifyListeners();
@@ -65,7 +61,21 @@ class PortofolioProvider extends ChangeNotifier {
     if (!formKey.currentState!.validate()) return;
     if (selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please pick an image'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.error, color: Colors.white),
+              SizedBox(width: 8),
+              Text("Please pick an image"),
+            ],
+          ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            ),
+            duration: const Duration(seconds: 2),
+        ),
       );
       return;
     }
@@ -89,7 +99,21 @@ class PortofolioProvider extends ChangeNotifier {
       await _service.createPortofolio(newPortfolio);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Portfolio added successfully!'), backgroundColor: Colors.green),
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text("Portfolio added successfully!"),
+            ],
+          ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            ),
+            duration: const Duration(seconds: 2),
+        ),
       );
 
       clearForm();
@@ -127,7 +151,7 @@ class PortofolioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Optional: navigator key kalau butuh snack bar global
+  
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 }

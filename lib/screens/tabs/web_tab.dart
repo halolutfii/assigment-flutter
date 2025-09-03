@@ -10,6 +10,10 @@ class WebTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final portfolioProvider = Provider.of<PortofolioProvider>(context);
 
+    if (portfolioProvider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final webItems = portfolioProvider.portofolios
         .where((p) => p.category.toLowerCase() == "website app")
         .toList();

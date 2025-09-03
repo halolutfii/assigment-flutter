@@ -10,6 +10,9 @@ class AllTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final portfolioProvider = Provider.of<PortofolioProvider>(context);
 
+    if (portfolioProvider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     if (portfolioProvider.portofolios.isEmpty) {
       return const Center(child: Text("No portfolio yet"));
     }

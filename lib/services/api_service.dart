@@ -28,10 +28,4 @@ class ApiService {
   Future<Response> getCurrentUser() async {
     return dio.get('/auth/getuser'); // cookie otomatis dipakai
   }
-
-  Future<Response> logout() async {
-    final response = await dio.post('/auth/logout');
-    await cookieJar.deleteAll(); // hapus cookie lokal
-    return response;
-  }
 }
