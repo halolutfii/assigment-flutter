@@ -1,130 +1,133 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../models/portofolio.dart';
+import '../services/portofolio_service.dart';
+import 'package:image_picker/image_picker.dart';
 
-class PortofolioProvider with ChangeNotifier {
-  final List<PortofolioItem> _items = [];
-  List<PortofolioItem> get items => _items;
+class PortofolioProvider extends ChangeNotifier {
+  final PortofolioService _service = PortofolioService();
 
-  void addItem(PortofolioItem item) {
-    _items.add(item);
+  // Form controllers
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController linkController = TextEditingController();
+
+  String? selectedCategory;
+  File? selectedImage;
+
+  List<Portofolio> portofolios = [];
+
+  // -------------------------------
+  // Setters
+  // -------------------------------
+  void setCategory(String category) {
+    selectedCategory = category;
     notifyListeners();
   }
 
-  final formKey = GlobalKey<FormState>();
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-  final titleController = TextEditingController();
-  final descriptionController = TextEditingController();
-  final dateController = TextEditingController();
-  final linkController = TextEditingController();
-
-  String? selectedCategory; 
-  DateTime? selectedDate;
-  File? selectedImage;
-
-  // Setter Category
-  void setCategory(String value) {
-    selectedCategory = value;
-    notifyListeners();
+    if (image != null) {
+      selectedImage = File(image.path);
+      notifyListeners();
+    }
   }
 
   Future<void> pickDate(BuildContext context) async {
+    final now = DateTime.now();
     final DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: selectedDate ?? DateTime.now(),
-    firstDate: DateTime(2000),
-    lastDate: DateTime(2100),
-    builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            dialogBackgroundColor: Colors.white, 
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF2E3A59), 
-              onPrimary: Colors.white,  
-              onSurface: Colors.black, 
-            ),
-          ),
-          child: child!,
-        );
-      },
+      context: context,
+      initialDate: now,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
     );
 
     if (picked != null) {
-      selectedDate = DateTime(picked.year, picked.month);
-      dateController.text =
-          "${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      final formatted = "${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      dateController.text = formatted;
       notifyListeners();
     }
   }
 
-  // Pick Image
-  Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      selectedImage = File(pickedFile.path);
-      notifyListeners();
-    }
+  // -------------------------------
+  // CRUD Operations
+  // -------------------------------
+  Future<void> fetchPortofolios() async {
+    portofolios = await _service.fetchPortofolios();
+    notifyListeners();
   }
 
-  // create porto
-  void saveForm(BuildContext context) {
-    if (formKey.currentState!.validate()) {
-      final newItem = PortofolioItem(
+  Future<void> saveForm(BuildContext context) async {
+    if (!formKey.currentState!.validate()) return;
+    if (selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please pick an image'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    try {
+      // Upload image ke backend
+      final imageUrl = await _service.uploadImage(selectedImage!);
+
+      // Buat object Portofolio baru
+      final newPortfolio = Portofolio(
+        id: '',
+        userId: '',
         title: titleController.text,
-        category: selectedCategory ?? "",
-        completion: selectedDate, 
         description: descriptionController.text,
-        link: linkController.text,
-        image: selectedImage!.path,
+        image: imageUrl,
+        category: selectedCategory ?? 'Other',
+        projectLink: linkController.text,
       );
 
-      addItem(newItem); 
-
-      clearForm();
+      // Kirim ke backend
+      await _service.createPortofolio(newPortfolio);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 8),
-              Text("Portfolio saved successfully!"),
-            ],
-          ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          duration: const Duration(seconds: 2),
-        ),
+        const SnackBar(content: Text('Portfolio added successfully!'), backgroundColor: Colors.green),
       );
 
+      clearForm();
       Navigator.pop(context);
+      await fetchPortofolios(); // reload list
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
     }
   }
 
+  Future<void> deletePortfolio(String id) async {
+    try {
+      await _service.deletePortofolio(id);
+      portofolios.removeWhere((p) => p.id == id);
+      notifyListeners();
+      ScaffoldMessenger.of(_navigatorKey.currentContext!).showSnackBar(
+        const SnackBar(content: Text('Portfolio deleted!'), backgroundColor: Colors.green),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(_navigatorKey.currentContext!).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
 
   void clearForm() {
     titleController.clear();
     descriptionController.clear();
     dateController.clear();
     linkController.clear();
+    selectedCategory = null;
     selectedImage = null;
-    selectedCategory = null; 
-    selectedDate = null;
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    titleController.dispose();
-    descriptionController.dispose();
-    dateController.dispose();
-    linkController.dispose();
-    super.dispose();
-  }
+  // Optional: navigator key kalau butuh snack bar global
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 }
-

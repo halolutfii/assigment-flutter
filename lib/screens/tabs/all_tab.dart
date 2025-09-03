@@ -10,15 +10,15 @@ class AllTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final portfolioProvider = Provider.of<PortofolioProvider>(context);
 
-    if (portfolioProvider.items.isEmpty) {
+    if (portfolioProvider.portofolios.isEmpty) {
       return const Center(child: Text("No portfolio yet"));
     }
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: portfolioProvider.items.length,
+      itemCount: portfolioProvider.portofolios.length,
       itemBuilder: (ctx, i) {
-        final item = portfolioProvider.items[i];
+        final item = portfolioProvider.portofolios[i];
         return ProjectCard(
           title: item.title,
           description: item.description,

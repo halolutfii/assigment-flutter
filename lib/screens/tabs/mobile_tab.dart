@@ -10,7 +10,7 @@ class MobileTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final portfolioProvider = Provider.of<PortofolioProvider>(context);
 
-    final mobileItems = portfolioProvider.items
+    final mobileItems = portfolioProvider.portofolios
         .where((p) => p.category.toLowerCase() == "mobile app")
         .toList();
 
