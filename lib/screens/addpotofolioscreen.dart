@@ -11,6 +11,7 @@ class AddPortfolioScreen extends StatefulWidget {
 }
 
 class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
+  bool isLoading = false;
   String? imageError;
 
   @override
@@ -49,7 +50,7 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
                 decoration: const InputDecoration(labelText: 'Category'),
                 dropdownColor: Colors.white,
                 value: provider.selectedCategory,
-                items: ['Website', 'Mobile App', 'Other']
+                items: ['Website App', 'Mobile App']
                     .map((cat) => DropdownMenuItem(
                           value: cat,
                           child: Text(cat),
@@ -182,100 +183,125 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
 
               // Action Buttons
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Submit
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2E3A59),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              bool valid = provider.formKey.currentState!.validate();
+                              if (provider.selectedImage == null) {
+                                setState(() {
+                                  imageError = 'Please pick an image';
+                                });
+                                valid = false;
+                              } else {
+                                setState(() {
+                                  imageError = null;
+                                });
+                              }
+
+                              if (valid) {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                try {
+                                  await provider.saveForm(context);
+                                } finally {
+                                  if (mounted) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
+                                }
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2E3A59),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                    ),
-                    onPressed: () {
-                      bool valid = provider.formKey.currentState!.validate();
-                      if (provider.selectedImage == null) {
-                        setState(() {
-                          imageError = 'Please pick an image';
-                        });
-                        valid = false;
-                      }
-                      if (valid) {
-                        provider.saveForm(context);
-                      }
-                    },
-                    child: const Text(
-                      'Submit',
-                      style:
-                          TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Submit',
+                              style: TextStyle(
+                                  color: Colors.white, fontWeight: FontWeight.w600),
+                            ),
                     ),
                   ),
-
-                  // Cancel
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => Theme(
-                          data: Theme.of(context).copyWith(
-                            dialogBackgroundColor: Colors.white,
-                            colorScheme: const ColorScheme.light(
-                              primary: Color(0xFF2E3A59),
-                              onPrimary: Colors.white,
-                              onSurface: Colors.black,
-                            ),
-                          ),
-                          child: AlertDialog(
-                            title: const Text(
-                              "Cancel",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            content: const Text(
-                              "Are you sure you want to cancel?",
-                              style: TextStyle(color: Colors.black87),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx),
-                                child: const Text(
-                                  "No",
-                                  style: TextStyle(color: Color(0xFF2E3A59)),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  provider.clearForm();
-                                  Navigator.pop(ctx);
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  "Yes",
-                                  style: TextStyle(color: Color(0xFF2E3A59)),
-                                ),
-                              ),
-                            ],
-                          ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                    },
-                    child: const Text(
-                      'Cancel',
-                      style:
-                          TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => Theme(
+                            data: Theme.of(context).copyWith(
+                              dialogBackgroundColor: Colors.white,
+                              colorScheme: const ColorScheme.light(
+                                primary: Color(0xFF2E3A59),
+                                onPrimary: Colors.white,
+                                onSurface: Colors.black,
+                              ),
+                            ),
+                            child: AlertDialog(
+                              title: const Text(
+                                "Cancel",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              content: const Text(
+                                "Are you sure you want to cancel?",
+                                style: TextStyle(color: Colors.black87),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text(
+                                    "No",
+                                    style: TextStyle(color: Color(0xFF2E3A59)),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    provider.clearForm();
+                                    Navigator.pop(ctx);
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    "Yes",
+                                    style: TextStyle(color: Color(0xFF2E3A59)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                 ],
-              ),
+              )
             ],
           ),
         ),

@@ -38,10 +38,16 @@ class PortofolioService {
   }
 
   Future<List<Portofolio>> fetchPortofolios() async {
-    final response = await _apiService.dio.get('/portofolio');
-    return (response.data as List)
-        .map((json) => Portofolio.fromMap(json))
-        .toList();
+    try {
+      final response = await _apiService.dio.get('/portofolio');
+      final data = response.data['data'];
+      return (data is List)
+          ? data.map((json) => Portofolio.fromMap(json)).toList()
+          : [];
+    } catch (e) {
+      print("Error fetchPortofolios: $e");
+      return [];
+    }
   }
 
   Future<void> deletePortofolio(String id) async {

@@ -10,6 +10,10 @@ class MobileTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final portfolioProvider = Provider.of<PortofolioProvider>(context);
 
+    if (portfolioProvider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final mobileItems = portfolioProvider.portofolios
         .where((p) => p.category.toLowerCase() == "mobile app")
         .toList();

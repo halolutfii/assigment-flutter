@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ProjectCard extends StatelessWidget {
@@ -37,11 +36,17 @@ class ProjectCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: imagePath.isNotEmpty
-                ? Image.file(
-                    File(imagePath),
+                ? Image.network(
+                    imagePath,
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
+                    errorBuilder: (ctx, error, stackTrace) => Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.broken_image, size: 40),
+                    ),
                   )
                 : Container(
                     width: 80,
@@ -68,8 +73,7 @@ class ProjectCard extends StatelessWidget {
                   children: tech
                       .map((t) => Chip(
                             label: Text(t),
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                           ))
                       .toList(),
                 ),

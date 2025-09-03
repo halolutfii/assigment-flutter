@@ -60,15 +60,51 @@ class AppDrawer extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
+           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
-            onTap: () => onItemTap(0),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: const [
+                      Icon(Icons.check_circle, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text("Settings Clicked!"),
+                    ],
+                  ),
+                  backgroundColor: Colors.green,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('About'),
-            onTap: () => onItemTap(1),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: const [
+                        Icon(Icons.check_circle, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text("About Clicked!"),
+                      ],
+                    ),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
           ),
           const Divider(),
           ListTile(
