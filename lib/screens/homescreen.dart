@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_portofolio_app/widgets/footer.dart';
 import 'package:my_portofolio_app/widgets/header.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -15,7 +14,6 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             buildPageHome(),
             const SizedBox(height: 450),
-            Footer()
           ],
         ),
       ),

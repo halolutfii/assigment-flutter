@@ -9,8 +9,9 @@ import 'widgets/header.dart';
 import 'screens/homescreen.dart';
 import 'screens/profilescreen.dart';
 import 'screens/portofolioscreen.dart';
+import 'screens/auth/splashscreen.dart';
 
-import 'providers/profile_providers.dart';
+import 'providers/user_providers.dart';
 import 'providers/portofolio_providers.dart';
 
 import 'routes.dart';
@@ -19,7 +20,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => PortofolioProvider()), 
       ],
       child: const MyApp(),
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: MainScreen(),
+      home: SplashScreen(),
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

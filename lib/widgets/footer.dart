@@ -6,7 +6,7 @@ class Footer extends StatelessWidget {
     return Container(
         padding: EdgeInsets.all(20),
         child: Text(
-            'HR Attendance Tracker v1.0',
+            'Portofolio Mobile App v1.0',
             style: TextStyle(
             fontSize: 14,
             color: Color.fromARGB(255, 0, 0, 0),
