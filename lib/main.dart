@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_portofolio_app/providers/auth_provider.dart';
+import 'package:my_portofolio_app/screens/auth/loginscreen.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'widgets/appbar.dart';
 import 'widgets/drawer.dart';
@@ -9,17 +12,28 @@ import 'widgets/header.dart';
 import 'screens/homescreen.dart';
 import 'screens/profilescreen.dart';
 import 'screens/portofolioscreen.dart';
-import 'screens/auth/splashscreen.dart';
 
-import 'providers/user_providers.dart';
+import 'providers/auth_provider.dart';
+import 'providers/user_provider.dart';
 import 'providers/portofolio_providers.dart';
 
 import 'routes.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+      // await Firebase.initializeApp();
+
+      await Firebase.initializeApp(
+          options: FirebaseOptions(
+              projectId: 'strategic-altar-471707-a5', // Project ID
+              messagingSenderId: '528786211815',//Project Number
+              apiKey: 'AIzaSyDgrkvs5epefj92MnLDmZACLqg_xz4oEm4',//Web API Key
+              appId: '1:528786211815:android:96f9f0cf6ecfff9a093342'), // App ID
+      );
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => PortofolioProvider()), 
       ],
@@ -39,7 +53,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: SplashScreen(),
+      home: LoginScreen(),
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
@@ -58,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
   }
   final List<Widget> _screens = [
     HomeScreen(),
-    ProfileScreen(),
+    // ProfileScreen(),
     PortofolioScreen(),
   ];
   final List<String> _titles = ['Home', 'Profile', 'Portofolio'];
@@ -89,9 +103,9 @@ class _MainScreenState extends State<MainScreen> {
           );
         },
       ),
-      drawer: AppDrawer(
-        onItemTap: _changeTab,
-      ),
+      // drawer: AppDrawer(
+      //   onItemTap: _changeTab,
+      // ),
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xFF2E3A59),

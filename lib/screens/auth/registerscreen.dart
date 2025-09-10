@@ -16,21 +16,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController departmentController = TextEditingController();
-  final TextEditingController positionController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
 
   bool loading = false;
 
   Future<void> register() async {
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        departmentController.text.isEmpty ||
-        positionController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        locationController.text.isEmpty) {
+        passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Semua field harus diisi!')),
       );
@@ -47,10 +39,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "name": nameController.text.trim(),
         "email": emailController.text.trim(),
         "password": passwordController.text.trim(),
-        "department": departmentController.text.trim(),
-        "position": positionController.text.trim(),
-        "phone": phoneController.text.trim(),
-        "location": locationController.text.trim(),
         "image": "https://res.cloudinary.com/duezfjojm/image/upload/v1756807417/mobileapp/profile/nskmxc5h2qn4hfui5tpq.png",
       });
 
@@ -136,14 +124,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     buildTextField("Email", emailController),
                     const SizedBox(height: 12),
                     buildTextField("Password", passwordController, obscure: true),
-                    const SizedBox(height: 12),
-                    buildTextField("Department", departmentController),
-                    const SizedBox(height: 12),
-                    buildTextField("Position", positionController),
-                    const SizedBox(height: 12),
-                    buildTextField("Phone", phoneController),
-                    const SizedBox(height: 12),
-                    buildTextField("Location", locationController),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
