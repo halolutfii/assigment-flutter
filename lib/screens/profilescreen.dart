@@ -119,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               Navigator.pushNamed(context, AppRoutes.editProfile);
             },
-            child: const Text("Edit Profile"),
+            child: const Text("Update Profile"),
           ),
         ],
       ),

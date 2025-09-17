@@ -4,6 +4,7 @@ import 'package:my_portofolio_app/providers/auth_provider.dart';
 import 'package:my_portofolio_app/screens/auth/loginscreen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'widgets/appbar.dart';
 import 'widgets/drawer.dart';
@@ -30,6 +31,12 @@ void main() async {
               apiKey: 'AIzaSyDgrkvs5epefj92MnLDmZACLqg_xz4oEm4',//Web API Key
               appId: '1:528786211815:android:96f9f0cf6ecfff9a093342'), // App ID
       );
+
+      await Supabase.initialize(
+        url: 'https://fjiwjztctrhwzwggtikx.supabase.co',
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaXdqenRjdHJod3p3Z2d0aWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxMjYyNDMsImV4cCI6MjA3MzcwMjI0M30.2N1ew6cqQyrGV8gUH3ZlhLilWPhHM4Xv3qpX0MuDO8M',
+      );
+
   runApp(
     MultiProvider(
       providers: [

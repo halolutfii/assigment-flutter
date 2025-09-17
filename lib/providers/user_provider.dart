@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/user_service.dart';
@@ -10,6 +11,14 @@ class UserProvider extends ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  File? _selectedImage;
+  File? get selectedImage => _selectedImage;
+
+  void setSelectedImage(File? file) {
+    _selectedImage = file;
+    notifyListeners();
+  }
 
   // form key
   final formKey = GlobalKey<FormState>();
@@ -44,7 +53,70 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  // update profile ke Firestore
+  // upload foto profile ke Supabase
+  Future<String> uploadProfilePhoto(File file) async {
+    if (_user == null) throw Exception("User not loaded");
+    final url = await _userService.uploadProfilePhoto(_user!.uid, file);
+    _user = Users(
+      uid: _user!.uid,
+      email: _user!.email,
+      name: _user!.name,
+      profession: _user!.profession,
+      phone: _user!.phone,
+      address: _user!.address,
+      bio: _user!.bio,
+      photo: url,
+      linkedin: _user!.linkedin,
+      github: _user!.github,
+    );
+
+    print('xxxxx');
+    print(url);
+    notifyListeners();
+    return url;
+  }
+
+  // update profile + optional upload foto baru
+  Future<void> updateProfileWithPhoto({File? newPhoto}) async {
+    if (_user == null) return;
+    if (!formKey.currentState!.validate()) return;
+
+    _setLoading(true);
+    try {
+      String? photoUrl = _user!.photo;
+
+      print('qqqqq');
+      print(photoUrl);
+
+      if (newPhoto != null) {
+        photoUrl = await uploadProfilePhoto(newPhoto);
+      }
+
+      final updated = Users(
+        uid: _user!.uid,
+        email: _user!.email,
+        name: nameController.text,
+        profession: professionController.text,
+        phone: phoneController.text,
+        address: addressController.text,
+        bio: bioController.text,
+        photo: photoUrl,
+        linkedin: linkedinController.text,
+        github: githubController.text,
+      );
+
+      await _userService.updateUserProfile(updated);
+      _user = updated;
+
+      print(updated);
+      print('asasas');
+      notifyListeners();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // update profile tanpa foto (lama)
   Future<void> updateProfile() async {
     if (_user == null) return;
     if (!formKey.currentState!.validate()) return;
