@@ -60,16 +60,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           key: _formKey,
           child: Column(
             children: [
-              const SizedBox(height: 20),
-              Text(
-                'Create Your Account',
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF2E3A59),
-                ),
-              ),
-              const SizedBox(height: 20),
+            const SizedBox(height: 40),
+            Image.asset("assets/images/solecode.png", height: 180,),
+            const SizedBox(height: 20),
+
               Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -87,37 +81,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       // Register button
                       SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _isLoading
-                              ? null
-                              : () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    setState(() => _isLoading = true);
-                                    try {
-                                      final success = await authProvider.registerWithEmail(
-                                        _emailController.text.trim(),
-                                        _passwordController.text.trim(),
-                                        userProvider,
-                                      );
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: _isLoading
+        ? null
+        : () async {
+            if (_formKey.currentState!.validate()) {
+              setState(() => _isLoading = true);
 
-                                      if (success && userProvider.user != null) {
-                                        Navigator.pushReplacementNamed(context, AppRoutes.home);
-                                      }
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text("Register failed: $e")),
-                                      );
-                                    } finally {
-                                      setState(() => _isLoading = false);
-                                    }
-                                  }
-                                },
-                          child: _isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
-                              : const Text("Register", style: TextStyle(fontSize: 16, color: Colors.white)),
-                        ),
-                      ),
+              final email = _emailController.text.trim();
+              final password = _passwordController.text.trim();
+              final profileProvider = Provider.of<UserProvider>(context, listen: false);
+
+              try {
+                final success = await authProvider.registerWithEmail(email, password, profileProvider);
+
+                if (success && profileProvider.user != null) {
+                  Navigator.pushReplacementNamed(context, AppRoutes.main);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(authProvider.errorMessage ?? "Register failed"),
+                    ),
+                  );
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Register failed: $e")),
+                );
+              } finally {
+                setState(() => _isLoading = false);
+              }
+            }
+          },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF2E3A59),
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+    child: _isLoading
+        ? const CircularProgressIndicator(color: Colors.white)
+        : Text(
+            "Register",
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+  ),
+),
+
                       const SizedBox(height: 12),
 
                       // Already have account

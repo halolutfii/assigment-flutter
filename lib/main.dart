@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: LoginScreen(),
+      initialRoute: AppRoutes.splashscreen, 
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
@@ -103,9 +103,9 @@ class _MainScreenState extends State<MainScreen> {
           );
         },
       ),
-      // drawer: AppDrawer(
-      //   onItemTap: _changeTab,
-      // ),
+      drawer: AppDrawer(
+        onItemTap: _changeTab,
+      ),
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xFF2E3A59),
