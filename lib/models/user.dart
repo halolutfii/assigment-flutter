@@ -7,7 +7,6 @@ class Users {
   final String? address;
   final String? bio;
   final String? photo; // simpan path foto (String)
-  final String role; // 'admin' atau 'member'
 
   Users({
     required this.uid,
@@ -18,7 +17,6 @@ class Users {
     this.phone,
     this.address,
     this.bio,
-    required this.role,
   });
 
   factory Users.fromMap(Map<String, dynamic> map) {
@@ -31,7 +29,6 @@ class Users {
       phone: map['phone'] ?? '',
       address: map['address'] ?? '',
       bio: map['bio'] ?? '',
-      role: map['role'] ?? 'member',
     );
   }
 
@@ -45,7 +42,6 @@ class Users {
       'address': address,
       'bio': bio,
       'photo': photo,
-      'role': role,
     };
   }
 }

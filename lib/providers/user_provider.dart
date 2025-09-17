@@ -55,8 +55,7 @@ class UserProvider extends ChangeNotifier {
           phone: phoneController.text,
           address: addressController.text,
           bio: bioController.text,
-          photo: _user!.photo,
-          role: _user!.role);
+          photo: _user!.photo);
 
       await _userService.updateUserProfile(updated);
       _user = updated;

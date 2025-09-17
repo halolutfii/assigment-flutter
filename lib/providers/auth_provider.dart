@@ -39,13 +39,13 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> registerWithEmail(String email, String password, UserProvider profileProvider) async {
+  Future<bool> registerWithEmail(String email, String password, UserProvider userProvider) async {
     _setLoading(true);
     try {
       _user = await _authService.registerWithEmail(email, password);
 
-      // simpan ke provider
-      await profileProvider.loadProfile(user!.uid);
+      // simpan ke Firestore pakai UserProvider
+      await userProvider.loadProfile(user!.uid);
 
       _errorMessage = null;
       notifyListeners();

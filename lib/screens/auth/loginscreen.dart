@@ -87,11 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 await authProvider.signInWithEmail(email, password, profileProvider);
 
                             if (success && profileProvider.user != null) {
-                              if (profileProvider.user!.role == "admin") {
                                 Navigator.pushReplacementNamed(context, AppRoutes.main);
-                              } else {
-                                Navigator.pushReplacementNamed(context, AppRoutes.main);
-                              }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -138,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () async {
                           final success = await authProvider.signInWithGoogle();
                           if (success && mounted) {
-                            Navigator.pushReplacementNamed(context, AppRoutes.home);
+                            Navigator.pushReplacementNamed(context, AppRoutes.main);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

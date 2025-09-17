@@ -38,7 +38,6 @@ class AuthService {
           uid: user.uid, 
           name: user.email!.split('@')[0], 
           email: user.email!, 
-          role: 'member',
         );
         await _userService.createUserProfile(profile);
       }
@@ -75,7 +74,6 @@ class AuthService {
           uid: user.uid, 
           name: user.displayName ?? "No Name", 
           email: user.email!, 
-          role: "member",
           photo: user.photoURL,
           );
           await _userService.createUserProfile(profile);
