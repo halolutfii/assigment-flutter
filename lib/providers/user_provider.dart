@@ -20,8 +20,10 @@ class UserProvider extends ChangeNotifier {
   final phoneController = TextEditingController();
   final addressController = TextEditingController();
   final bioController = TextEditingController();
+  final linkedinController = TextEditingController();
+  final githubController = TextEditingController();
 
-  // load profile from Firestore
+  // load profile dari Firestore
   Future<void> loadProfile(String uid) async {
     _setLoading(true);
     try {
@@ -33,6 +35,8 @@ class UserProvider extends ChangeNotifier {
         phoneController.text = _user!.phone ?? '';
         addressController.text = _user!.address ?? '';
         bioController.text = _user!.bio ?? '';
+        linkedinController.text = _user!.linkedin ?? '';
+        githubController.text = _user!.github ?? '';
       }
       notifyListeners();
     } finally {
@@ -48,14 +52,17 @@ class UserProvider extends ChangeNotifier {
     _setLoading(true);
     try {
       final updated = Users(
-          uid: _user!.uid,
-          email: _user!.email,
-          name: nameController.text,
-          profession: professionController.text,
-          phone: phoneController.text,
-          address: addressController.text,
-          bio: bioController.text,
-          photo: _user!.photo);
+        uid: _user!.uid,
+        email: _user!.email,
+        name: nameController.text,
+        profession: professionController.text,
+        phone: phoneController.text,
+        address: addressController.text,
+        bio: bioController.text,
+        photo: _user!.photo,
+        linkedin: linkedinController.text,
+        github: githubController.text,
+      );
 
       await _userService.updateUserProfile(updated);
       _user = updated;
@@ -82,6 +89,8 @@ class UserProvider extends ChangeNotifier {
     phoneController.dispose();
     addressController.dispose();
     bioController.dispose();
+    linkedinController.dispose();
+    githubController.dispose();
     super.dispose();
   }
 }

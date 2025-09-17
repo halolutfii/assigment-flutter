@@ -1,12 +1,14 @@
 class Users {
-  final String uid; // Firebase Auth UID = document ID
+  final String uid; 
   final String name;
   final String? profession;
   final String email;
   final String? phone;
   final String? address;
   final String? bio;
-  final String? photo; // simpan path foto (String)
+  final String? photo; 
+  final String? linkedin;
+  final String? github;
 
   Users({
     required this.uid,
@@ -16,6 +18,8 @@ class Users {
     this.photo,
     this.phone,
     this.address,
+    this.linkedin,
+    this.github,
     this.bio,
   });
 
@@ -24,11 +28,13 @@ class Users {
       uid: map['uid'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
-      profession: map['profession'] ?? '',
-      photo: map['photo'] ?? '',
-      phone: map['phone'] ?? '',
-      address: map['address'] ?? '',
-      bio: map['bio'] ?? '',
+      profession: map['profession'],
+      photo: map['photo'],
+      phone: map['phone'],
+      address: map['address'],
+      linkedin: map['linkedin'],
+      github: map['github'],
+      bio: map['bio'],
     );
   }
 
@@ -42,6 +48,8 @@ class Users {
       'address': address,
       'bio': bio,
       'photo': photo,
+      'linkedin': linkedin,
+      'github': github,
     };
   }
 }
