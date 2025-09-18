@@ -30,6 +30,7 @@ class WebTab extends StatelessWidget {
           description: item.description,
           tech: [item.category],
           imagePath: item.image,
+          projectLink: item.projectLink,
         );
       }).toList(),
     );

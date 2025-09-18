@@ -189,54 +189,20 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
                       onPressed: isLoading
                           ? null
                           : () async {
-                              bool valid = provider.formKey.currentState!.validate();
-                              if (provider.selectedImage == null) {
-                                setState(() {
-                                  imageError = 'Please pick an image';
-                                });
-                                valid = false;
-                              } else {
-                                setState(() {
-                                  imageError = null;
-                                });
-                              }
+                              final userId = 'user-id-xxx'; 
+                              setState(() {
+                                isLoading = true;
+                              });
 
-                              if (valid) {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                try {
-                                  await provider.saveForm(context);
-                                } finally {
-                                  if (mounted) {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                  }
-                                }
-                              }
+                              await provider.saveForm(context, userId);
+
+                              setState(() {
+                                isLoading = false;
+                              });
                             },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2E3A59),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
                       child: isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text(
-                              'Submit',
-                              style: TextStyle(
-                                  color: Colors.white, fontWeight: FontWeight.w600),
-                            ),
+                          ? const CircularProgressIndicator()
+                          : const Text('Submit'),
                     ),
                   ),
                   const SizedBox(width: 12),

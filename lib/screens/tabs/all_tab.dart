@@ -27,6 +27,7 @@ class AllTab extends StatelessWidget {
           description: item.description,
           tech: item.category.isNotEmpty ? [item.category] : [],
           imagePath: item.image,
+          projectLink: item.projectLink,
         );
       },
     );
