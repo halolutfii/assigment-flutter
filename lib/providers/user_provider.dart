@@ -69,9 +69,7 @@ class UserProvider extends ChangeNotifier {
       linkedin: _user!.linkedin,
       github: _user!.github,
     );
-
-    print('xxxxx');
-    print(url);
+    
     notifyListeners();
     return url;
   }
@@ -85,11 +83,8 @@ class UserProvider extends ChangeNotifier {
     try {
       String? photoUrl = _user!.photo;
 
-      print('qqqqq');
-      print(photoUrl);
-
       if (newPhoto != null) {
-        photoUrl = await uploadProfilePhoto(newPhoto);
+        photoUrl = await uploadProfilePhoto(newPhoto); // Upload foto baru
       }
 
       final updated = Users(
@@ -107,10 +102,10 @@ class UserProvider extends ChangeNotifier {
 
       await _userService.updateUserProfile(updated);
       _user = updated;
-
-      print(updated);
-      print('asasas');
       notifyListeners();
+    } catch (e) {
+      print('Error updating profile with photo: $e');
+      rethrow; // Rethrow untuk penanganan lebih lanjut di UI
     } finally {
       _setLoading(false);
     }

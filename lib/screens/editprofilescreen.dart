@@ -24,6 +24,69 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  Future<void> _saveProfile(BuildContext context) async {
+    final provider = Provider.of<UserProvider>(context, listen: false);
+
+    setState(() {
+      isSaving = true;
+    });
+
+    try {
+      // Periksa apakah ada foto baru yang di-upload, jika ada, update foto
+      if (provider.selectedImage != null) {
+        await provider.updateProfileWithPhoto(newPhoto: provider.selectedImage);
+      } else {
+        await provider.updateProfile(); // Update tanpa foto baru
+      }
+
+      // Menampilkan SnackBar sukses
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text("Profile updated successfully!"),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Langsung navigasi kembali ke ProfileScreen
+      Navigator.pop(context); // Pop untuk kembali ke Profile Screen
+
+    } catch (error) {
+      print('Error updating profile: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.error, color: Colors.white),
+              SizedBox(width: 8),
+              Text("Failed to update profile. Please try again."),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+
+    setState(() {
+      isSaving = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<UserProvider>(context);
@@ -173,32 +236,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                           onPressed: () async {
                             if (provider.formKey.currentState!.validate()) {
-                              setState(() => isSaving = true);
-
-                              await provider.updateProfile();
-
-                              setState(() => isSaving = false);
-
-                              if (context.mounted) {
-                                Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Row(
-                                        children: const [
-                                          Icon(Icons.check_circle, color: Colors.white),
-                                          SizedBox(width: 8),
-                                          Text("Update profile successfully!"),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.green,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
+                              await _saveProfile(context);
                             }
                           },
                           child: const Text(

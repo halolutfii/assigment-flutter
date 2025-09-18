@@ -30,9 +30,9 @@ class UserService {
   }
 
   Future<String> uploadProfilePhoto(String uid, File file) async {
-    final String fileName = uid;
+    final fileName = 'public/$uid/${file.uri.pathSegments.last}';
 
-    await _supabase.storage
+    final response = await _supabase.storage
         .from('profile-photos')
         .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
 
