@@ -11,14 +11,14 @@ class PortofolioProvider extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
+  final TextEditingController dateController = TextEditingController(); // Tambahkan dateController
   final TextEditingController linkController = TextEditingController();
 
   String? selectedCategory;
   File? selectedImage;
 
   List<Portofolio> portofolios = [];
-  bool isLoading = false; 
+  bool isLoading = false;
 
   void setCategory(String category) {
     selectedCategory = category;
@@ -35,6 +35,7 @@ class PortofolioProvider extends ChangeNotifier {
     }
   }
 
+  // Fungsi untuk memilih tanggal
   Future<void> pickDate(BuildContext context) async {
     final now = DateTime.now();
     final DateTime? picked = await showDatePicker(
@@ -51,14 +52,16 @@ class PortofolioProvider extends ChangeNotifier {
     }
   }
 
-  // Create
-  Future<void> fetchPortofolios() async {
-    portofolios = await _service.fetchPortofolios();
+  // Fetch Portofolios from Firestore
+  Future<void> fetchPortofolios(String userId) async {
+    portofolios = await _service.fetchPortofolios(userId);
     notifyListeners();
   }
 
-  Future<void> saveForm(BuildContext context) async {
+  // Save Form - Create Portofolio
+  Future<void> saveForm(BuildContext context, String userId) async {
     if (!formKey.currentState!.validate()) return;
+
     if (selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -69,34 +72,34 @@ class PortofolioProvider extends ChangeNotifier {
               Text("Please pick an image"),
             ],
           ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            ),
-            duration: const Duration(seconds: 2),
+          ),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
     }
 
     try {
-      // Upload image ke backend
-      final imageUrl = await _service.uploadImage(selectedImage!);
+      // Upload the image to Supabase Storage
+      final imageUrl = await _service.uploadImage(selectedImage!, userId);
 
-      // Buat object Portofolio baru
-      final newPortfolio = Portofolio(
-        id: '',
-        userId: '',
+      // Create Portofolio object
+      final newPortofolio = Portofolio(
+        id: '', // Firestore will auto-generate the ID
+        userId: userId,
         title: titleController.text,
         description: descriptionController.text,
-        image: imageUrl,
+        image: imageUrl, // Gambar yang di-upload
         category: selectedCategory ?? 'Other',
         projectLink: linkController.text,
       );
 
-      // Kirim ke backend
-      await _service.createPortofolio(newPortfolio);
+      // Create Portofolio in Firestore
+      await _service.createPortofolio(newPortofolio);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -107,35 +110,21 @@ class PortofolioProvider extends ChangeNotifier {
               Text("Portfolio added successfully!"),
             ],
           ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            ),
-            duration: const Duration(seconds: 2),
+          ),
+          duration: const Duration(seconds: 2),
         ),
       );
 
+      // Clear form and go back
       clearForm();
       Navigator.pop(context);
-      await fetchPortofolios(); // reload list
+      await fetchPortofolios(userId); // reload list
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-      );
-    }
-  }
-
-  Future<void> deletePortfolio(String id) async {
-    try {
-      await _service.deletePortofolio(id);
-      portofolios.removeWhere((p) => p.id == id);
-      notifyListeners();
-      ScaffoldMessenger.of(_navigatorKey.currentContext!).showSnackBar(
-        const SnackBar(content: Text('Portfolio deleted!'), backgroundColor: Colors.green),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(_navigatorKey.currentContext!).showSnackBar(
         SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
     }
@@ -150,8 +139,4 @@ class PortofolioProvider extends ChangeNotifier {
     selectedImage = null;
     notifyListeners();
   }
-
-  
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 }
