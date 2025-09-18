@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_portofolio_app/widgets/carousel.dart';
 import 'package:my_portofolio_app/widgets/header.dart';
+import 'package:my_portofolio_app/widgets/profile.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -13,7 +15,8 @@ class HomeScreen extends StatelessWidget {
             Header(),
             const SizedBox(height: 20),
             buildPageHome(),
-            const SizedBox(height: 450),
+            ProfileHome(),
+            PromoCarousel()
           ],
         ),
       ),
